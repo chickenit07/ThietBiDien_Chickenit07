@@ -1,5 +1,6 @@
 package com.hust.controller;
 
+import com.google.gson.Gson;
 import com.hust.model.Category;
 import com.hust.model.JsonResult;
 import com.hust.service.CategoryService;
@@ -12,7 +13,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.List;
+
 // value is contextPath
 @WebServlet(name = "CategoryController", value = "/api/v1/category/*")
 public class CategoryController extends HttpServlet {
@@ -23,19 +26,15 @@ public class CategoryController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String pathInfo = request.getPathInfo();
         String rs = "";
-        if (pathInfo.indexOf("/insert") == 0) {
-            String name = request.getParameter("name");
-            if (name != null) {
-                try {
-                    categoryService.insert(name);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            } else response.sendError(404, "Not found argument");
-            response.getWriter().write("Success!");
-        } else {
-            response.sendError(404, "URL is not supported");
+        try {
+            Category category = new Gson().fromJson(request.getReader(), Category.class);
+            Category newCategory = categoryService.insert(category.getName());
+            rs = newCategory != null ? jsonResult.jsonSuccess(newCategory) : jsonResult.jsonFail(newCategory);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            jsonResult.jsonFail("Failed");
         }
+        response.getWriter().write(rs);
     }
 
     //tim kiem category
@@ -49,7 +48,7 @@ public class CategoryController extends HttpServlet {
             int id = Integer.parseInt(request.getParameter("id"));
             try {
                 Category category = categoryService.findById(id);
-                rs = jsonResult.jsonSuccess(category == null ? "null" : category);
+                rs = jsonResult.jsonSuccess(category == null ? "Not found category" : category);
             } catch (SQLException e) {
                 e.printStackTrace();
                 rs = jsonResult.jsonFail("Error when finding category by id");
@@ -73,37 +72,28 @@ public class CategoryController extends HttpServlet {
     //Sua category
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String pathInfo = request.getPathInfo();
-        if (pathInfo.indexOf("/update") == 0) {
-            String name = request.getParameter("name");
-            Integer id = Integer.parseInt(request.getParameter("id"));
-            if (name != null && id != null) {
-                try {
-                    categoryService.update(new Category(id, name, false));
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            } else response.sendError(404, "Not found argument");
-        } else {
-            response.sendError(404, "URL is not supported");
+        String rs = "";
+        try{
+            Category category = new Gson().fromJson(request.getReader(),Category.class);
+            rs = jsonResult.jsonSuccess(categoryService.update(category));
+        }catch (Exception e){
+            e.printStackTrace();
+            jsonResult.jsonFail("update failed");
         }
+        response.getWriter().write(rs);
     }
 
     //xoa category
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String pathInfo = request.getPathInfo();
-        if (pathInfo.indexOf("/delete") == 0) {
-            Integer id = Integer.parseInt(request.getParameter("id"));
-            if (id != null) {
-                try {
-                    categoryService.delete(id);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            } else response.sendError(404, "Not found argument");
-        } else {
-            response.sendError(404, "URL is not supported");
+        String rs = "";
+        try{
+            int id = Integer.parseInt(request.getParameter("id"));
+            rs = jsonResult.jsonSuccess(categoryService.delete(id));
+        }catch (Exception e){
+            e.printStackTrace();
+            jsonResult.jsonFail("Remove Failed");
         }
+        response.getWriter().write(rs);
     }
 }

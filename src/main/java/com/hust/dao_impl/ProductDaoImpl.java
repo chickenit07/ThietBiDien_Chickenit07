@@ -24,11 +24,11 @@ public class ProductDaoImpl implements ProductDao {
         String sql = "select * from product where deleted = false order by create_date DESC"; //DESC: giảm dần ASC: tân
         PreparedStatement preparedStatement = myConnection.prepare(sql);
         ResultSet resultSet = preparedStatement.executeQuery();
-        if(resultSet.first()) {
+        if (resultSet.first()) {
             do {
                 Product product = getObject(resultSet);
-                if(product != null) products.add(product);
-            } while(resultSet.next());
+                if (product != null) products.add(product);
+            } while (resultSet.next());
         }
         return products;
     }
@@ -78,20 +78,20 @@ public class ProductDaoImpl implements ProductDao {
                 "(? = -1 or p.bought = ?) and" +
                 "(? = -1 or p.promotion = ?)";
         PreparedStatement preparedStatement = myConnection.prepare(sql);
-        preparedStatement.setString(1, "%"+name+"%");
+        preparedStatement.setString(1, "%" + name + "%");
         preparedStatement.setString(2, startDate);
         preparedStatement.setString(3, startDate == null ? "0000-01-01" : startDate);
         preparedStatement.setString(4, endDate);
         preparedStatement.setString(5, endDate == null ? "9999-12-31" : endDate);
-        if(soldOut == null) {
+        if (soldOut == null) {
             preparedStatement.setString(6, null);
             preparedStatement.setBoolean(7, true);
         } else {
             preparedStatement.setString(6, "");
             preparedStatement.setBoolean(7, soldOut);
         }
-        preparedStatement.setInt(8,  guarantee);
-        preparedStatement.setInt(9,  guarantee);
+        preparedStatement.setInt(8, guarantee);
+        preparedStatement.setInt(9, guarantee);
         preparedStatement.setInt(10, category);
         preparedStatement.setInt(11, category);
         preparedStatement.setInt(12, bouth);
@@ -106,23 +106,23 @@ public class ProductDaoImpl implements ProductDao {
     public Product getObject(ResultSet resultSet) throws SQLException {
         Product product = null;
         product = new Product(resultSet.getInt("id"), resultSet.getString("name"),
-        resultSet.getDouble("price"), resultSet.getDate("create_date"),
-        resultSet.getBoolean("deleted"), resultSet.getString("image"),
+                resultSet.getDouble("price"), resultSet.getDate("create_date"),
+                resultSet.getBoolean("deleted"), resultSet.getString("image"),
                 resultSet.getString("introduction"),
                 resultSet.getString("specification"),
-        resultSet.getBoolean("sold_out"), resultSet.getInt("guarantee"),
-        resultSet.getInt("category_id"), resultSet.getInt("bought"),
-        resultSet.getInt("promotion"));
+                resultSet.getBoolean("sold_out"), resultSet.getInt("guarantee"),
+                resultSet.getInt("category_id"), resultSet.getInt("bought"),
+                resultSet.getInt("promotion"));
         return product;
     }
 
     @Override
     public List<Product> getList(ResultSet resultSet) throws SQLException {
         List<Product> productList = new ArrayList<>();
-        if(resultSet.first()) {
+        if (resultSet.first()) {
             do {
                 Product product = getObject(resultSet);
-                if(product != null) productList.add(product);
+                if (product != null) productList.add(product);
             } while (resultSet.next());
         }
         return productList;
@@ -130,12 +130,35 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public List<Product> findAll() throws SQLException {
-        return null;
+        List<Product> productList = new ArrayList<>();
+        String sql = "select * from product,category where product.category_id = category.id " +
+                "and product.deleted = false";
+        PreparedStatement preparedStatement = myConnection.prepare(sql);
+        ResultSet resultSet = preparedStatement.executeQuery(sql);
+        if (resultSet.first()) {
+            do {
+                Product product = getObject(resultSet);
+                if (product != null) {
+                    productList.add(product);
+                }
+            } while (resultSet.next());
+        }
+
+        return productList;
     }
 
     @Override
     public Product findById(int id) throws SQLException {
-        return null;
+        Product product = null;
+        String sql = "select * from product,category where product.category_id = category.id " +
+                "and product.deleted = false and product.id = ?";
+        PreparedStatement preparedStatement = myConnection.prepare(sql);
+        preparedStatement.setInt(1,id);
+        ResultSet resultSet = preparedStatement.executeQuery(sql);
+        if (resultSet.first()) {
+            product = getObject(resultSet);
+        }
+        return product;
     }
 
     @Override
@@ -155,9 +178,9 @@ public class ProductDaoImpl implements ProductDao {
         preparedStatement.setInt(10, product.getBouth());
         preparedStatement.setInt(11, product.getPromotion());
         int rs = preparedStatement.executeUpdate();
-        if(rs > 0 ) {
+        if (rs > 0) {
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
-            if(resultSet.first()) {
+            if (resultSet.first()) {
                 newProduct = findById((int) resultSet.getLong(1));
             }
         }

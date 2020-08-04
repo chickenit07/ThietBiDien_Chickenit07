@@ -38,7 +38,7 @@ public class CategoryDaoImpl implements CategoryDao {
         //select *(là lấy tất cả các trường) from category(là thực hiện với bảng nào) where deleted = false (chứa các điều kiện khi lấy)
         String sql = "select * from category where deleted = false"; //câu lệnh sql cần thực hiện để find all
         PreparedStatement preparedStatement = myConnection.prepare(sql); // lấy ra prepare dùng cho câu lệnh query
-        ResultSet resultSet = preparedStatement.executeQuery(); // thực thi câu lệnh query và lấy resultSet trả về
+        ResultSet resultSet =  preparedStatement.executeQuery(); // thực thi câu lệnh query và lấy resultSet trả về
         //resetSet.first() để đưa con trỏ resetSet về bản ghi đầu tiên lấy được nếu tồn tại trả về true, còn không thì false
         if(resultSet.first()) {
             do {
