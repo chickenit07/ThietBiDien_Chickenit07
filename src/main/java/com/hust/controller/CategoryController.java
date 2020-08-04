@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
-
+// value is contextPath
 @WebServlet(name = "CategoryController", value = "/api/v1/category/*")
 public class CategoryController extends HttpServlet {
     //them category
