@@ -17,9 +17,9 @@ public interface ProductService {
     Product findById(int id) throws SQLException;
 
     List<Product> search(String name, String startDate, String endDate,
-                         Boolean soldOut, int guarantee, int category, int bouth, int promotion) throws SQLException;
+                         Boolean soldOut, int guarantee, int category, int bouth, int promotion) throws Exception;
 
     List<Product> sortBy(String field, boolean isAsc) throws SQLException;
 
-    List<Product> findByCategory(int idCategory) throws SQLException;
+    List<Product> findByCategory(int idCategory) throws Exception;
 }

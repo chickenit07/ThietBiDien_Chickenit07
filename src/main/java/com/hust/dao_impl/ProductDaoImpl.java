@@ -16,8 +16,6 @@ public class ProductDaoImpl implements ProductDao {
 
     MyConnection myConnection = new MyConnection();
 
-    private CategoryDao categoryDao = new CategoryDaoImpl();
-
     @Override
     public List<Product> sortByCreateDate() throws SQLException {
         List<Product> products = new ArrayList<>();
@@ -67,7 +65,7 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     @Override
-    public List<Product> search(String name, String startDate, String endDate, Boolean soldOut, int guarantee, int category, int bouth, int promotion) throws Exception {
+    public List<Product> search(String name, String startDate, String endDate, Boolean soldOut, int guarantee, int category, int bought, int promotion) throws Exception {
         String sql = "select distinct p.* from product as p, category as c where p.deleted = false and " +
                 "p.name like ? and " +
                 "(? is null or p.create_date >= ?) and " +
@@ -94,8 +92,8 @@ public class ProductDaoImpl implements ProductDao {
         preparedStatement.setInt(9, guarantee);
         preparedStatement.setInt(10, category);
         preparedStatement.setInt(11, category);
-        preparedStatement.setInt(12, bouth);
-        preparedStatement.setInt(13, bouth);
+        preparedStatement.setInt(12, bought);
+        preparedStatement.setInt(13, bought);
         preparedStatement.setInt(14, promotion);
         preparedStatement.setInt(15, promotion);
         ResultSet resultSet = preparedStatement.executeQuery();
@@ -131,8 +129,8 @@ public class ProductDaoImpl implements ProductDao {
     @Override
     public List<Product> findAll() throws SQLException {
         List<Product> productList = new ArrayList<>();
-        String sql = "select * from product,category where product.category_id = category.id " +
-                "and product.deleted = false";
+        String sql = "select distinct p.* from product as p,category as c where p.category_id = c.id " +
+                "and p.deleted = false";
         PreparedStatement preparedStatement = myConnection.prepare(sql);
         ResultSet resultSet = preparedStatement.executeQuery(sql);
         if (resultSet.first()) {
@@ -150,10 +148,10 @@ public class ProductDaoImpl implements ProductDao {
     @Override
     public Product findById(int id) throws SQLException {
         Product product = null;
-        String sql = "select * from product,category where product.category_id = category.id " +
-                "and product.deleted = false and product.id = ?";
+        String sql = "select p.* from product as p,category as c where p.category_id = c.id " +
+                "and p.deleted = false and p.id = ?";
         PreparedStatement preparedStatement = myConnection.prepare(sql);
-        preparedStatement.setInt(1,id);
+        preparedStatement.setInt(1, id);
         ResultSet resultSet = preparedStatement.executeQuery(sql);
         if (resultSet.first()) {
             product = getObject(resultSet);
@@ -175,7 +173,7 @@ public class ProductDaoImpl implements ProductDao {
         preparedStatement.setBoolean(7, product.isSoldOut());
         preparedStatement.setInt(8, product.getGuarantee());
         preparedStatement.setInt(9, product.getCategoryId());
-        preparedStatement.setInt(10, product.getBouth());
+        preparedStatement.setInt(10, product.getBought());
         preparedStatement.setInt(11, product.getPromotion());
         int rs = preparedStatement.executeUpdate();
         if (rs > 0) {
@@ -188,12 +186,45 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     @Override
-    public boolean update(Product category) throws SQLException {
-        return false;
+    public boolean update(Product product) throws SQLException {
+        boolean result = false;
+        String sql = "update product set name = ?," +
+                "price = ?," +
+                "create_date = ?," +
+                "deleted = false," +
+                "image = ?," +
+                "introduction = ?," +
+                "specification = ?," +
+                "sold_out = ?," +
+                "guarantee = ?," +
+                "category_id = ?," +
+                "bought = ?," +
+                "promotion = ?";
+        PreparedStatement preparedStatement = myConnection.prepareUpdate(sql);
+        preparedStatement.setString(1, product.getName());
+        preparedStatement.setDouble(2, product.getPrice());
+        preparedStatement.setDate(3, new Date(new java.util.Date().getTime()));
+        preparedStatement.setString(4, product.getImage());
+        preparedStatement.setString(5, product.getIntroduction());
+        preparedStatement.setString(6, product.getSpecification());
+        preparedStatement.setBoolean(7, product.isSoldOut());
+        preparedStatement.setInt(8, product.getGuarantee());
+        preparedStatement.setInt(9, product.getCategoryId());
+        preparedStatement.setInt(10, product.getBought());
+        preparedStatement.setInt(11, product.getPromotion());
+        int rs = preparedStatement.executeUpdate();
+        if(rs > 0) result = true;
+        return result;
     }
 
     @Override
     public boolean delete(int id) throws SQLException {
-        return false;
+        boolean result = false;
+        String sql = "update product set deleted = true where id = ?";
+        PreparedStatement preparedStatement = myConnection.prepareUpdate(sql);
+        preparedStatement.setInt(1,id);
+        int rs = preparedStatement.executeUpdate();
+        if(rs > 0) return true;
+        return result;
     }
 }

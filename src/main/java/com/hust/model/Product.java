@@ -26,7 +26,7 @@ public class Product {
 
     private int categoryId;
 
-    private int bouth; // số lượng sản phẩm đã bán được
+    private int bought; // số lượng sản phẩm đã bán được
 
     private int promotion; // phần trăm khuyến mãi của sản phẩm
 
@@ -44,7 +44,7 @@ public class Product {
                 ", soldOut=" + soldOut +
                 ", guarantee=" + guarantee +
                 ", categoryId=" + categoryId +
-                ", bouth=" + bouth +
+                ", bought=" + bought +
                 ", promotion=" + promotion +
                 '}';
     }
@@ -137,12 +137,12 @@ public class Product {
         this.categoryId = categoryId;
     }
 
-    public int getBouth() {
-        return bouth;
+    public int getBought() {
+        return bought;
     }
 
-    public void setBouth(int bouth) {
-        this.bouth = bouth;
+    public void setBought(int bought) {
+        this.bought = bought;
     }
 
     public int getPromotion() {
@@ -156,7 +156,7 @@ public class Product {
     public Product() {
     }
 
-    public Product(int id, String name, double price, Date createDate, boolean deleted, String image, String introduction, String specification, boolean soldOut, int guarantee, int categoryId, int bouth, int promotion) {
+    public Product(int id, String name, double price, Date createDate, boolean deleted, String image, String introduction, String specification, boolean soldOut, int guarantee, int categoryId, int bought, int promotion) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -168,7 +168,7 @@ public class Product {
         this.soldOut = soldOut;
         this.guarantee = guarantee;
         this.categoryId = categoryId;
-        this.bouth = bouth;
+        this.bought = bought;
         this.promotion = promotion;
     }
 }

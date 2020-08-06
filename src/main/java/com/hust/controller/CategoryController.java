@@ -24,12 +24,11 @@ public class CategoryController extends HttpServlet {
     private JsonResult jsonResult = new JsonResult();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String pathInfo = request.getPathInfo();
         String rs = "";
         try {
             Category category = new Gson().fromJson(request.getReader(), Category.class);
             Category newCategory = categoryService.insert(category.getName());
-            rs = newCategory != null ? jsonResult.jsonSuccess(newCategory) : jsonResult.jsonFail(newCategory);
+            rs = newCategory != null ? jsonResult.jsonSuccess(newCategory) : jsonResult.jsonFail(null);
         } catch (SQLException e) {
             e.printStackTrace();
             jsonResult.jsonFail("Failed");
