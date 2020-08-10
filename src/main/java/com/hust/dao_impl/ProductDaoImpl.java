@@ -57,7 +57,7 @@ public class ProductDaoImpl implements ProductDao {
 //        }
 //        return products;
         String sql = "select p.* from product as p, category as c " +
-                "where c.deleted = false and c.id = ? and p.category_id = category.id";
+                "where c.deleted = false and c.id = ? and p.category_id = c.id";
         PreparedStatement preparedStatement = myConnection.prepare(sql);
         preparedStatement.setInt(1, idCategory);
         ResultSet resultSet = preparedStatement.executeQuery();
