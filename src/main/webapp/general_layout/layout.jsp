@@ -10,7 +10,8 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <title>Quản lý sản phẩm</title>
+<%--    tag tiles thực hiện tìm kiếm đối tường có name là title, lấy giá trị tương ứng và chuyển về kiểu string để hiện bên trong tà title.--%>
+    <title><tiles:getAsString name="title"/></title>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -21,6 +22,10 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+    <tiles:insertAttribute name="heaeder"/>
+    <tiles:insertAttribute name="body"/>
+    <tiles:insertAttribute name="footer"/>
 
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
