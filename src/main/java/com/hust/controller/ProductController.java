@@ -1,7 +1,6 @@
 package com.hust.controller;
 
 import com.google.gson.Gson;
-import com.hust.model.Category;
 import com.hust.model.JsonResult;
 import com.hust.model.Product;
 import com.hust.service.ProductService;
@@ -13,7 +12,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 
 @WebServlet(name = "ProductController", value = "/api/v1/product/*")
@@ -51,14 +49,14 @@ public class ProductController extends HttpServlet {
             try {
                 Product product = productService.findById(id);
                 rs = jsonResult.jsonSuccess(product == null ? "Not found product" : product);
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 rs = jsonResult.jsonFail("Error when finding product by id");
             }
             response.getWriter().write(rs);
         } else if (pathInfo.indexOf("/sort-by") == 0) {
             String field = request.getParameter("field");
-            boolean isAsc = Boolean.parseBoolean(request.getParameter("isAsc"));
+            boolean isAsc = Boolean.parseBoolean(request.getParameter("isasc"));
             try {
                 List<Product> productList = productService.sortBy(field, isAsc);
                 rs = jsonResult.jsonSuccess(productList);

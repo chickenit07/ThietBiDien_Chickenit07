@@ -34,7 +34,7 @@ public class ProductDaoImpl implements ProductDao {
     @Override
     public List<Product> sortBy(String field, boolean isAsc) throws SQLException {
         String sql = "select * from product where " +
-                "deleted = false order by " + field + (isAsc ? "ASC" : "DESC");
+                "deleted = false order by " + field + (isAsc ? " ASC" : " DESC"); // ASC: Tang dan, DESC giam dan
         PreparedStatement preparedStatement = myConnection.prepare(sql);
         ResultSet resultSet = preparedStatement.executeQuery();
         return getList(resultSet);
@@ -148,11 +148,10 @@ public class ProductDaoImpl implements ProductDao {
     @Override
     public Product findById(int id) throws SQLException {
         Product product = null;
-        String sql = "select p.* from product as p,category as c where p.category_id = c.id " +
-                "and p.deleted = false and p.id = ?";
+        String sql = "select p.* from product as p,category as c where p.category_id = c.id and p.deleted = false and p.id = ?";
         PreparedStatement preparedStatement = myConnection.prepare(sql);
         preparedStatement.setInt(1, id);
-        ResultSet resultSet = preparedStatement.executeQuery(sql);
+        ResultSet resultSet = preparedStatement.executeQuery();
         if (resultSet.first()) {
             product = getObject(resultSet);
         }
